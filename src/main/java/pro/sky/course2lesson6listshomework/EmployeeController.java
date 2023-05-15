@@ -4,9 +4,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ListsController {
+public class EmployeeController {
 
-    ListsService listsService = new ListsService();
+    EmployeeService listsService = new EmployeeService();
 
     @GetMapping()
     public String welcome() {
