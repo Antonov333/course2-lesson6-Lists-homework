@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ListsController {
 
+    ListsService listsService = new ListsService();
+
     @GetMapping()
     public String welcome() {
-        return "Hi!";
+        return listsService.welcome();
     }
 
 }
