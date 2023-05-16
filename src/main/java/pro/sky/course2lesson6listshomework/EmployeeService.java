@@ -1,12 +1,37 @@
 package pro.sky.course2lesson6listshomework;
 
-import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
-@Service
 public class EmployeeService {
 
-    public String welcome() {
-        return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2>";
+    private static final int MAX_PERSONNEL_NUMBER = 100;
+
+    private List<Employee> employeeList;
+
+    public EmployeeService() {
+        employeeList = new ArrayList<>();
     }
 
+    public static int getMaxPersonnelNumber() {
+        return MAX_PERSONNEL_NUMBER;
+    }
+
+    public int getPersonnelNumber() {
+        return employeeList.size();
+    }
+
+    public boolean addEmployee(String firstName, String lastName) {
+        if (getPersonnelNumber() >= MAX_PERSONNEL_NUMBER) {
+            System.out.println("Here will be exception because personell is full");
+            return false;
+        }
+
+        Employee employee = new Employee(firstName, lastName);
+        employeeList.add(employee);
+        return true;
+
+    }
 }
