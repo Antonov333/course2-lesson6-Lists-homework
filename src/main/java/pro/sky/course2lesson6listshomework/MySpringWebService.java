@@ -6,7 +6,15 @@ import org.springframework.stereotype.Service;
 public class MySpringWebService {
 
     public String welcome() {
-        return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2>";
+
+        EmployeeService e = new EmployeeService();
+
+//        Employee john = new Employee("John", "Smith") ;
+//        System.out.println("john.equals(new Employee(\"John\", \"Smith\")) = " + john.equals(new Employee("John", "Smith")));
+
+        return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2><br><br>" +
+                "e.getPersonnelNumber() = " + e.getPersonnelNumber();
+
     }
 
 }
