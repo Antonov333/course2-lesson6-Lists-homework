@@ -49,7 +49,19 @@ public class EmployeeService {
         }
     }
 
-    public boolean removeEmployee(String firstName, String lastname) {
+    public Employee findAndReturnEmployee(String firstName, String lastName) {
+        Employee employee = new Employee(firstName, lastName);
+
+        if (findEmployee(firstName, lastName)) {
+            return new Employee(firstName, lastName);
+        } // findEmployee never returns 'false' but throws NotFound exception instead
+
+        return new Employee("-", "-");
+
+    }
+
+
+    public boolean removeEmployeeB(String firstName, String lastname) {
         boolean b = false;
         if (findEmployee(firstName, lastname)) {
             b = employeeList.remove(new Employee(firstName, lastname));
@@ -57,26 +69,40 @@ public class EmployeeService {
         return b;
     }
 
+    public Employee removeEmployeeO(String firstName, String lastname) {
+        Employee employee = new Employee(firstName, lastname);
+        if (employeeList.remove(employee)) {
+            return employee;
+        } else {
+            throw new EmployeeNotFoundException("... this person has not been hired");
+        }
+    }
+
+
     public String welcome() {
 
         return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2><br><br>";
 
     }
 
-    public String addEmployeeJSON(String firstName, String lastName) {
+    public String addEmployeeJson(String firstName, String lastName) {
         String message = "Add Employee" + " " + firstName + " " + lastName + ": ";
         Boolean result = true;
 
         NameCheck nameCheck = new NameCheck(firstName, lastName);
 
-        message = (new Employee(firstName, lastName)).toJSON();
+        message = (new Employee(firstName, lastName)).toJson();
 
         if (nameCheck.getCode() != 0) {
             message = message + nameCheck.getMessage();
             return message;
         }
 
-        try {
+        result = addEmployee(firstName, lastName);
+
+
+
+ /*       try {
             result = addEmployee(firstName, lastName);
         } catch (EmployeeStorageIsFullException employeeStorageIsFullException) {
             message = message + employeeStorageIsFullException.getMessage();
@@ -85,7 +111,10 @@ public class EmployeeService {
 
         } finally {
             return message;
-        }
+        } */
+
+        return message;
+
     }
 
 
@@ -93,19 +122,22 @@ public class EmployeeService {
         return employeeList;
     }
 
-    public String removeEmployeeJson(String firstname, String lastName) {
+    /*
+    public Employee removeEmployeeO(String firstname, String lastName) {
         NameCheck nameCheck = new NameCheck(firstname, lastName);
         if (nameCheck.getCode() != 0) {
             return nameCheck.getMessage();
         }
         Employee employee = new Employee(firstname, lastName);
         if (removeEmployee(firstname, lastName)) {
-            return employee.toJSON();
+            return employee.toJson();
         } else {
             return "... whether it is OK?";
         }
 
     }
+
+     */
 
     class NameCheck {
 
@@ -126,7 +158,7 @@ public class EmployeeService {
          */
             if (firstName != null && lastName != null) {
                 code = 0;
-                message = (new Employee(firstName, lastName)).toJSON();
+                message = (new Employee(firstName, lastName)).toJson();
             }
             if (firstName == null && lastName == null) {
                 code = 1;
@@ -153,7 +185,7 @@ public class EmployeeService {
         public int getCode() {
             return code;
         }
-        
+
         public String getMessage() {
             return message;
         }

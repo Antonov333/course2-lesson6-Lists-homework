@@ -10,7 +10,7 @@ public class Employee {
         return firstName + " " + lastName;
     }
 
-    public String toJSON() {
+    public String toJson() {
 //        JSON { "firstName": "Ivan", "lastName": "Ivanov" }
         return "{\"firstName\": \"" + firstName + "\", \"lastName\": \"" + lastName + "\"}";
     }

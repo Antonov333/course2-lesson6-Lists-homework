@@ -18,7 +18,13 @@ public class EmployeeController {
     @GetMapping(path = "/add")
     public String add(@RequestParam(required = false, name = "firstName") String f,
                       @RequestParam(required = false, name = "lastName") String l) {
-        return employeeService.addEmployeeJSON(f, l);
+        try {
+            return employeeService.addEmployeeJson(f, l);
+        } catch (EmployeeAlreadyAddedException alreadyAdded) {
+            return (new Employee(f, l)).toJson() + alreadyAdded.getMessage();
+        } catch (EmployeeStorageIsFullException arrayIsFull) {
+            return (new Employee(f, l)).toJson() + arrayIsFull.getMessage();
+        }
     }
 
     @GetMapping(path = "/remove")
@@ -26,12 +32,19 @@ public class EmployeeController {
             @RequestParam(required = false, name = "firstName") String firstName,
             @RequestParam(required = false, name = "lastName") String lastName
     ) {
-        return new Employee(firstName, lastName);
+        return employeeService.removeEmployeeO(firstName, lastName);
     }
 
     @GetMapping(path = "/list")
     public Set<Employee> list() {
         return employeeService.getEmployeeList();
+    }
+
+    @GetMapping(path = "/find")
+    public Employee find(
+            @RequestParam(required = false, name = "firstName") String first,
+            @RequestParam(required = false, name = "lastName") String last) {
+        return employeeService.findAndReturnEmployee(first, last);
     }
 
     @GetMapping(path = "/employee")
