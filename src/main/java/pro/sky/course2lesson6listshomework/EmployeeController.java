@@ -1,6 +1,9 @@
 package pro.sky.course2lesson6listshomework;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Set;
 
@@ -19,7 +22,7 @@ public class EmployeeController {
     public Employee add(@RequestParam(required = false, name = "firstName") String f,
                         @RequestParam(required = false, name = "lastName") String l) {
         try {
-            return employeeService.addEmployeeO(f, l);
+            return employeeService.addEmployee(f, l);
         } catch (EmployeeAlreadyAddedException alreadyAdded) {
             return new Employee(f, l + " " + alreadyAdded.getMessage());
         } catch (EmployeeStorageIsFullException arrayIsFull) {
@@ -34,8 +37,17 @@ public class EmployeeController {
             @RequestParam(required = false, name = "firstName") String firstName,
             @RequestParam(required = false, name = "lastName") String lastName
     ) {
-        return employeeService.removeEmployeeO(firstName, lastName);
+        try {
+            return employeeService.removeEmployee(firstName, lastName);
+        } catch (EmployeeNotFoundException employeeNotFoundException) {
+            return new Employee(firstName, lastName + " " + employeeNotFoundException.getMessage());
+        } catch (EmployeeStorageIsFullException arrayIsFull) {
+            return new Employee(firstName, lastName + " " + arrayIsFull.getMessage());
+        } catch (WrongNameFormatException wrongNameFormat) {
+            return new Employee(firstName, lastName + " " + wrongNameFormat.getMessage());
+        }
     }
+
 
     @GetMapping(path = "/list")
     public Set<Employee> list() {
@@ -46,7 +58,13 @@ public class EmployeeController {
     public Employee find(
             @RequestParam(required = false, name = "firstName") String first,
             @RequestParam(required = false, name = "lastName") String last) {
-        return employeeService.findAndReturnEmployee(first, last);
+        try {
+            return employeeService.findEmployee(first, last);
+        } catch (WrongNameFormatException wrongNameFormatException) {
+            return new Employee(first, last + " " + wrongNameFormatException.getMessage());
+        } catch (EmployeeNotFoundException employeeNotFoundException) {
+            return new Employee(first, last + " " + employeeNotFoundException.getMessage());
+        }
     }
 
     @GetMapping(path = "/employee")

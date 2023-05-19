@@ -3,8 +3,8 @@ package pro.sky.course2lesson6listshomework;
 import java.util.Objects;
 
 public class Employee {
-    private String firstName;
-    private String lastName;
+    private final String firstName;
+    private final String lastName;
 
     public String toString() {
         return firstName + " " + lastName;
@@ -34,7 +34,6 @@ public class Employee {
         if (!other.getClass().equals(this.getClass())) {
             return false;
         }
-        ;
         return Objects.equals(firstName, ((Employee) other).getFirstName())
                 && Objects.equals(lastName, ((Employee) other).getLastName());
     }

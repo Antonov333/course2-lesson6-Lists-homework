@@ -2,14 +2,15 @@ package pro.sky.course2lesson6listshomework;
 
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class EmployeeService {
 
-    private int maxPersonnelNumber;
+    private final int maxPersonnelNumber;
 
-    private Set<Employee> employeeList;
+    private final Set<Employee> employeeList;
 
     public EmployeeService() {
         employeeList = new HashSet<>();
@@ -41,7 +42,7 @@ public class EmployeeService {
         return true;
     }
 
-    public boolean findEmployee(String firstname, String lastname) {
+    public boolean findEmployeeBoolean(String firstname, String lastname) {
         if (employeeList.contains(new Employee(firstname, lastname))) {
             return true;
         } else {
@@ -49,63 +50,8 @@ public class EmployeeService {
         }
     }
 
-    public Employee findAndReturnEmployee(String firstName, String lastName) {
+    public Employee findEmployee(String firstName, String lastName) {
         Employee employee = new Employee(firstName, lastName);
-
-        if (findEmployee(firstName, lastName)) {
-            return new Employee(firstName, lastName);
-        } // findEmployee never returns 'false' but throws NotFound exception instead
-
-        return new Employee("-", "-");
-
-    }
-
-
-    public boolean removeEmployeeB(String firstName, String lastname) {
-        boolean b = false;
-        if (findEmployee(firstName, lastname)) {
-            b = employeeList.remove(new Employee(firstName, lastname));
-        }
-        return b;
-    }
-
-    public Employee removeEmployeeO(String firstName, String lastname) {
-        Employee employee = new Employee(firstName, lastname);
-        if (employeeList.remove(employee)) {
-            return employee;
-        } else {
-            throw new EmployeeNotFoundException("... this person has not been hired");
-        }
-    }
-
-
-    public String welcome() {
-
-        return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2><br><br>";
-
-    }
-
-    public String addEmployeeJson(String firstName, String lastName) {
-        String message = "Add Employee" + " " + firstName + " " + lastName + ": ";
-        Boolean result = true;
-
-        NameCheck nameCheck = new NameCheck(firstName, lastName);
-
-        message = (new Employee(firstName, lastName)).toJson();
-
-        if (nameCheck.getCode() != 0) {
-            message = message + nameCheck.getMessage();
-            return message;
-        }
-
-        result = addEmployeeB(firstName, lastName);
-
-        return message;
-
-    }
-
-    public Employee addEmployeeO(String firstName, String lastName) {
-        String message = "Add Employee" + " " + firstName + " " + lastName + ": ";
 
         NameCheck nameCheck = new NameCheck(firstName, lastName);
 
@@ -113,9 +59,46 @@ public class EmployeeService {
             throw new WrongNameFormatException(nameCheck.getMessage());
         }
 
-        Boolean result = addEmployeeB(firstName, lastName);
+        if (findEmployeeBoolean(firstName, lastName)) {
+            return new Employee(firstName, lastName);
+        } // findEmployeeBoolean never returns 'false' but throws NotFound exception instead
 
-        if (result) {
+        return new Employee("-", "- :: ... Looks like something went wrong");
+
+    }
+
+    public Employee removeEmployee(String firstName, String lastname) {
+        Employee employee = new Employee(firstName, lastname);
+        NameCheck nameCheck = new NameCheck(firstName, lastname);
+
+        if (nameCheck.getCode() != 0) {
+            throw new WrongNameFormatException(nameCheck.getMessage());
+        }
+
+        if (employeeList.remove(employee)) {
+            return employee;
+        } else {
+            throw new EmployeeNotFoundException("... this person has is not hired yet");
+        }
+    }
+
+    public String welcome() {
+        return "<h2>Welcome to homework Sets for Course 2 Lesson 6 ))</h2><br><br>" +
+                "<a href=\"http://localhost:8080/employee/add/?firstName=John&lastName=Smith\"> Add employee John Smith </a> | " +
+                "<a href=\"http://localhost:8080/employee/remove/?firstName=John&lastName=Smith\"> Remove employee John Smith </a> | " +
+                "<a href=\"http://localhost:8080/employee/find/\"> Find employee </a> | " +
+                "<a href=\"http://localhost:8080/employee/list\"> View employee list </a>";
+    }
+
+    public Employee addEmployee(String firstName, String lastName) {
+
+        NameCheck nameCheck = new NameCheck(firstName, lastName);
+
+        if (nameCheck.getCode() != 0) {
+            throw new WrongNameFormatException(nameCheck.getMessage());
+        }
+
+        if (addEmployeeB(firstName, lastName)) {
             return new Employee(firstName, lastName);
         }
 
@@ -128,27 +111,10 @@ public class EmployeeService {
         return employeeList;
     }
 
-    /*
-    public Employee removeEmployeeO(String firstname, String lastName) {
-        NameCheck nameCheck = new NameCheck(firstname, lastName);
-        if (nameCheck.getCode() != 0) {
-            return nameCheck.getMessage();
-        }
-        Employee employee = new Employee(firstname, lastName);
-        if (removeEmployee(firstname, lastName)) {
-            return employee.toJson();
-        } else {
-            return "... whether it is OK?";
-        }
-
-    }
-
-     */
-
     class NameCheck {
 
-        private String firstName;
-        private String lastName;
+        private final String firstName;
+        private final String lastName;
         private int code;
         private String message;
 
@@ -164,7 +130,7 @@ public class EmployeeService {
          */
             if (firstName != null && lastName != null) {
                 code = 0;
-                message = (new Employee(firstName, lastName)).toJson();
+                message = "OK";
             }
             if (firstName == null && lastName == null) {
                 code = 1;
@@ -195,7 +161,6 @@ public class EmployeeService {
         public String getMessage() {
             return message;
         }
-
 
     }
 
