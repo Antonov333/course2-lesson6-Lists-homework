@@ -29,7 +29,7 @@ public class EmployeeService {
         return employeeList.size();
     }
 
-    public boolean addEmployee(String firstName, String lastName) {
+    public boolean addEmployeeB(String firstName, String lastName) {
         if (getPersonnelNumber() >= maxPersonnelNumber) {
             throw new EmployeeStorageIsFullException("No vacant position at the moment");
         }
@@ -98,22 +98,28 @@ public class EmployeeService {
             return message;
         }
 
-        result = addEmployee(firstName, lastName);
-
-
-
- /*       try {
-            result = addEmployee(firstName, lastName);
-        } catch (EmployeeStorageIsFullException employeeStorageIsFullException) {
-            message = message + employeeStorageIsFullException.getMessage();
-        } catch (EmployeeAlreadyAddedException employeeAlreadyAddedException) {
-            message = message + employeeAlreadyAddedException.getMessage();
-
-        } finally {
-            return message;
-        } */
+        result = addEmployeeB(firstName, lastName);
 
         return message;
+
+    }
+
+    public Employee addEmployeeO(String firstName, String lastName) {
+        String message = "Add Employee" + " " + firstName + " " + lastName + ": ";
+
+        NameCheck nameCheck = new NameCheck(firstName, lastName);
+
+        if (nameCheck.getCode() != 0) {
+            throw new WrongNameFormatException(nameCheck.getMessage());
+        }
+
+        Boolean result = addEmployeeB(firstName, lastName);
+
+        if (result) {
+            return new Employee(firstName, lastName);
+        }
+
+        return new Employee("-", "- !! looks like something went wrong (( ...");
 
     }
 
@@ -190,9 +196,7 @@ public class EmployeeService {
             return message;
         }
 
-        public Employee getEmployee() {
-            return new Employee(firstName, lastName);
-        }
+
     }
 
 }

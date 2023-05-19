@@ -16,14 +16,16 @@ public class EmployeeController {
     }
 
     @GetMapping(path = "/add")
-    public String add(@RequestParam(required = false, name = "firstName") String f,
-                      @RequestParam(required = false, name = "lastName") String l) {
+    public Employee add(@RequestParam(required = false, name = "firstName") String f,
+                        @RequestParam(required = false, name = "lastName") String l) {
         try {
-            return employeeService.addEmployeeJson(f, l);
+            return employeeService.addEmployeeO(f, l);
         } catch (EmployeeAlreadyAddedException alreadyAdded) {
-            return (new Employee(f, l)).toJson() + alreadyAdded.getMessage();
+            return new Employee(f, l + " " + alreadyAdded.getMessage());
         } catch (EmployeeStorageIsFullException arrayIsFull) {
-            return (new Employee(f, l)).toJson() + arrayIsFull.getMessage();
+            return new Employee(f, l + " " + arrayIsFull.getMessage());
+        } catch (WrongNameFormatException wrongNameFormat) {
+            return new Employee(f, l + " " + wrongNameFormat.getMessage());
         }
     }
 
@@ -49,7 +51,7 @@ public class EmployeeController {
 
     @GetMapping(path = "/employee")
     public String employee() {
-        return "employee";
+        return employeeService.welcome();
     }
 
 }
