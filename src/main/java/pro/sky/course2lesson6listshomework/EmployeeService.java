@@ -30,20 +30,21 @@ public class EmployeeService {
         return employeeList.size();
     }
 
-    public boolean addEmployeeB(String firstName, String lastName) {
-        if (getPersonnelNumber() >= maxPersonnelNumber) {
-            throw new EmployeeStorageIsFullException("No vacant position at the moment");
-        }
-        Employee employee = new Employee(firstName, lastName);
-        if (employeeList.contains(employee)) {
-            throw new EmployeeAlreadyAddedException("This person is already hired");
-        }
-        employeeList.add(employee);
-        return true;
-    }
+  /**  public boolean addEmployeeB(String firstName, String lastName) {
+   if (getPersonnelNumber() >= maxPersonnelNumber) {
+   throw new EmployeeStorageIsFullException("No vacant position at the moment");
+   }
+   Employee employee = new Employee(firstName, lastName);
+   if (employeeList.contains(employee)) {
+   throw new EmployeeAlreadyAddedException("This person is already hired");
+   }
+   employeeList.add(employee);
+   return true;
+   }
+   */
 
     public boolean findEmployeeBoolean(String firstname, String lastname) {
-        if (employeeList.contains(new Employee(firstname, lastname))) {
+        if (employeeList.contains(new Employee(firstname, lastname, "error"))) {
             return true;
         } else {
             throw new EmployeeNotFoundException();
@@ -51,7 +52,7 @@ public class EmployeeService {
     }
 
     public Employee findEmployee(String firstName, String lastName) {
-        Employee employee = new Employee(firstName, lastName);
+        Employee employee = new Employee(firstName, lastName, "error");
 
         NameCheck nameCheck = new NameCheck(firstName, lastName);
 
@@ -60,15 +61,15 @@ public class EmployeeService {
         }
 
         if (findEmployeeBoolean(firstName, lastName)) {
-            return new Employee(firstName, lastName);
+            return new Employee(firstName, lastName, "enrolled");
         } // findEmployeeBoolean never returns 'false' but throws NotFound exception instead
 
-        return new Employee("-", "- :: ... Looks like something went wrong");
+        return new Employee("-", "- ", "... Looks like something went wrong");
 
     }
 
     public Employee removeEmployee(String firstName, String lastname) {
-        Employee employee = new Employee(firstName, lastname);
+        Employee employee = new Employee(firstName, lastname, "removed");
         NameCheck nameCheck = new NameCheck(firstName, lastname);
 
         if (nameCheck.getCode() != 0) {
@@ -98,12 +99,25 @@ public class EmployeeService {
             throw new WrongNameFormatException(nameCheck.getMessage());
         }
 
-        if (addEmployeeB(firstName, lastName)) {
-            return new Employee(firstName, lastName);
+        if (getPersonnelNumber() >= getMaxPersonnelNumber()) {
+            throw new EmployeeStorageIsFullException("Personal array is full. No vacant position at the moment");
         }
 
-        return new Employee("-", "- !! looks like something went wrong (( ...");
+        try {
+            if (findEmployeeBoolean(firstName, lastName)) {
+                throw new EmployeeAlreadyAddedException("already hired");
+            }
+        } catch (EmployeeNotFoundException employeeNotFound) {
+            // it is OK if employee not found because we want to add him
+        }
 
+        Employee employee = new Employee(firstName, lastName, "enrolled");
+
+        if (employeeList.add(employee)) {
+            return employee;
+        } else {
+            throw new EmployeeAlreadyAddedException("already hired");
+        }
     }
 
 

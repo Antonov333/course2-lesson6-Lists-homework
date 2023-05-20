@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Employee {
     private final String firstName;
     private final String lastName;
+    private String status;
 
     public String toString() {
         return firstName + " " + lastName;
@@ -18,9 +19,19 @@ public class Employee {
         return lastName;
     }
 
-    public Employee(String firstName, String lastName) {
+    public String getStatus() {
+
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Employee(String firstName, String lastName, String status) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.status = status;
     }
 
     @Override

@@ -11,7 +11,7 @@ import java.util.Set;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-    EmployeeService employeeService = new EmployeeService(2);
+    EmployeeService employeeService = new EmployeeService(3);
 
     @GetMapping()
     public String welcome() {
@@ -24,12 +24,15 @@ public class EmployeeController {
         try {
             return employeeService.addEmployee(f, l);
         } catch (EmployeeAlreadyAddedException alreadyAdded) {
-            return new Employee(f, l + " " + alreadyAdded.getMessage());
+            return new Employee(f, l, alreadyAdded.getMessage());
         } catch (EmployeeStorageIsFullException arrayIsFull) {
-            return new Employee(f, l + " " + arrayIsFull.getMessage());
+            return new Employee(f, l, arrayIsFull.getMessage());
         } catch (WrongNameFormatException wrongNameFormat) {
-            return new Employee(f, l + " " + wrongNameFormat.getMessage());
+            return new Employee(f, l, wrongNameFormat.getMessage());
+        } catch (Exception e) {
+            return new Employee(f, l, e.getMessage());
         }
+
     }
 
     @GetMapping(path = "/remove")
@@ -40,11 +43,11 @@ public class EmployeeController {
         try {
             return employeeService.removeEmployee(firstName, lastName);
         } catch (EmployeeNotFoundException employeeNotFoundException) {
-            return new Employee(firstName, lastName + " " + employeeNotFoundException.getMessage());
+            return new Employee(firstName, lastName, employeeNotFoundException.getMessage());
         } catch (EmployeeStorageIsFullException arrayIsFull) {
-            return new Employee(firstName, lastName + " " + arrayIsFull.getMessage());
+            return new Employee(firstName, lastName, arrayIsFull.getMessage());
         } catch (WrongNameFormatException wrongNameFormat) {
-            return new Employee(firstName, lastName + " " + wrongNameFormat.getMessage());
+            return new Employee(firstName, lastName, wrongNameFormat.getMessage());
         }
     }
 
@@ -61,9 +64,9 @@ public class EmployeeController {
         try {
             return employeeService.findEmployee(first, last);
         } catch (WrongNameFormatException wrongNameFormatException) {
-            return new Employee(first, last + " " + wrongNameFormatException.getMessage());
+            return new Employee(first, last, wrongNameFormatException.getMessage());
         } catch (EmployeeNotFoundException employeeNotFoundException) {
-            return new Employee(first, last + " " + employeeNotFoundException.getMessage());
+            return new Employee(first, last, employeeNotFoundException.getMessage());
         }
     }
 
